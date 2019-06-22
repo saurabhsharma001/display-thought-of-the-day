@@ -1,6 +1,6 @@
 #include <SimpleTimer.h> //https://github.com/jfturcot/SimpleTimer
 #include <PubSubClient.h> //https://github.com/knolleary/pubsubclient
-#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h> //https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h> //https://github.com/esp8266/Arduino/tree/master/libraries/ArduinoOTA
