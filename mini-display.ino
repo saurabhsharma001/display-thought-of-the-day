@@ -4,19 +4,21 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h> //https://github.com/esp8266/Arduino/tree/master/libraries/ArduinoOTA
-#include <Adafruit_GFX.h> //https://github.com/adafruit/Adafruit-GFX-Library
-#include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
+#include "SSD1306.h"
 
-#define OLED_RESET 0  // GPIO0
-Adafruit_SSD1306 OLED(OLED_RESET);
+//#define OLED_RESET 1  // GPIO0
+#define SDA D2
+#define SCL D5
+
+SSD1306  OLED(0x3C, SDA, SCL);
 
 //USER CONFIGURED SECTION START//
 const char* hostName = "MiniDisplay";
 const char* ssid = "xxxxx";
-const char* password = "xxxxx";
+const char* password = "xxxxxx";
 const char* mqtt_server = "192.168.xx.xx";
 const int mqtt_port = 1883;
-const char *mqtt_user = "hass";
+const char *mqtt_user = "xxxxxx";
 const char *mqtt_pass = "xxxxxx";
 const char *mqtt_client_name = "MessageDisplay"; // Client connections can't have the same connection name
 const char *mqtt_message_topic = "display/message";
@@ -57,16 +59,18 @@ void setup_wifi() {
 }
 
 void displayMessage(String message){
-  OLED.begin();
-  OLED.clearDisplay();
+  OLED.init();
+  OLED.clear();
+  OLED.flipScreenVertically();
   OLED.display();
  
   //Add stuff into the 'display buffer'
-  //OLED.setTextWrap(false);
+  //OLED.setTextWrap(true);
   //OLED.setTextSize(1);
-  OLED.setTextColor(WHITE);
-  OLED.setCursor(1,1);
-  OLED.print(message);
+//  OLED.setTextColor(WHITE);
+//  OLED.setCursor(1,1);
+//  OLED.print(message);
+  OLED.drawString(0, 0, message);
  
   OLED.display(); //output 'display buffer' to screen  
 }
@@ -132,8 +136,20 @@ void onMessageCallback(char* topic, byte* payload, unsigned int length)
   }
   if(newTopic == mqtt_size_topic)
   {
+    OLED.clear();
     OLED.display();
-    OLED.setTextSize(newPayload.toInt());
+    switch(newPayload.toInt()){
+      case 10:
+        OLED.setFont(ArialMT_Plain_10);
+        break;
+      case 16:
+        OLED.setFont(ArialMT_Plain_16);
+        break;
+      case 24:
+        OLED.setFont(ArialMT_Plain_24);
+        break;
+    }
+//    OLED.setTextSize(newPayload.toInt());
     displayMessage(currentMessage);
   }
 }
